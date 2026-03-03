@@ -1,0 +1,55 @@
+load("@aspect_bazel_lib//lib:testing.bzl", "assert_archive_contains")
+load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
+load("@gazelle//:def.bzl", "gazelle")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load", "oci_push")
+load("@tar.bzl", "mutate", "tar")
+load("//bazel/oci:images.bzl", "declare_container_images")
+
+# gazelle:prefix github.com/ai-slop-code/pictago
+# gazelle:go_grpc_compilers @rules_go//proto:go_proto,@rules_go//proto:go_grpc_v2
+
+# protoc-gen-validate
+# gazelle:resolve proto proto validate/validate.proto @protoc_gen_validate//validate:validate_proto
+# gazelle:resolve proto go validate/validate.proto @protoc_gen_validate//validate:validate_go_proto
+
+# google api annotations
+# gazelle:resolve proto proto google/api/annotations.proto @googleapis//google/api:annotations_proto
+# gazelle:resolve proto go google/api/annotations.proto @googleapis//google/api:annotations_go_proto
+# gazelle:resolve proto proto google/api/field_behavior.proto @googleapis//google/api:field_behavior_proto
+# gazelle:resolve proto go google/api/field_behavior.proto @googleapis//google/api:field_behavior_go_proto
+
+# grpc-gateway openapi
+# gazelle:resolve proto proto protoc-gen-openapiv2/options/annotations.proto @grpc_ecosystem_grpc_gateway//protoc-gen-openapiv2/options:options_proto
+# gazelle:resolve proto go protoc-gen-openapiv2/options/annotations.proto @grpc_ecosystem_grpc_gateway//protoc-gen-openapiv2/options:options_go_proto
+
+gazelle(name = "gazelle")
+
+alias(
+    name = "gazelle-update",
+    actual = "//scripts:gazelle_generate",
+)
+
+alias(
+    name = "gazelle-generate",
+    actual = "//scripts:gazelle_generate",
+)
+
+alias(
+    name = "gazelle-check",
+    actual = "//scripts:gazelle_check",
+)
+
+alias(
+    name = "check",
+    actual = "//scripts:check",
+)
+
+alias(
+    name = "tidy",
+    actual = "//scripts:tidy",
+)
+
+alias(
+    name = "generate",
+    actual = "//scripts:generate",
+)

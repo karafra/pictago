@@ -1,0 +1,111 @@
+module(
+    name = "pictago",
+    version = "0.1.0",
+)
+
+bazel_dep(name = "platforms", version = "1.0.0")
+bazel_dep(name = "rules_go", version = "0.59.0")
+bazel_dep(name = "gazelle", version = "0.47.0")
+bazel_dep(name = "aspect_bazel_lib", version = "2.22.5")
+bazel_dep(name = "rules_oci", version = "2.2.6")
+bazel_dep(name = "rules_pkg", version = "1.0.1")
+bazel_dep(name = "tar.bzl", version = "0.6.0")
+bazel_dep(name = "rules_shell", version = "0.6.1")
+bazel_dep(name = "buildifier_prebuilt", version = "8.2.0.2")
+bazel_dep(name = "rules_multirun", version = "0.13.0")
+bazel_dep(name = "bazel_skylib", version = "1.9.0")
+bazel_dep(name = "rules_nodejs", version = "6.7.3")
+bazel_dep(name = "aspect_rules_js", version = "3.0.0")
+bazel_dep(name = "rules_proto_grpc", version = "5.8.0")
+bazel_dep(name = "rules_proto_grpc_grpc_gateway", version = "5.8.0")
+bazel_dep(name = "grpc_ecosystem_grpc_gateway", version = "2.27.6")
+bazel_dep(name = "googleapis-go", version = "1.0.0")
+bazel_dep(name = "googleapis", version = "0.0.0-20251003-2193a2bf")
+bazel_dep(name = "rules_proto", version = "7.1.0")
+bazel_dep(name = "protobuf", version = "33.5")
+
+node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node", dev_dependency = True)
+node.toolchain(node_version = "20.19.0")
+
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm", dev_dependency = True)
+npm.npm_translate_lock(
+    name = "npm",
+    pnpm_lock = "//web:pnpm-lock.yaml",
+    verify_node_modules_ignored = "//:.npmrc",
+)
+use_repo(npm, "npm")
+
+bazel_lib = use_extension("@aspect_bazel_lib//lib:extensions.bzl", "toolchains")
+bazel_lib.yq()
+use_repo(bazel_lib, "jq_toolchains")
+use_repo(bazel_lib, "yq_toolchains")
+
+shellcheck_ext = use_extension("//bazel/toolchains:shellcheck_repos.bzl", "shellcheck_repos")
+shellcheck_ext.download()
+use_repo(
+    shellcheck_ext,
+    "com_github_koalaman_shellcheck_darwin_amd64",
+    "com_github_koalaman_shellcheck_darwin_arm64",
+    "com_github_koalaman_shellcheck_linux_amd64",
+    "com_github_koalaman_shellcheck_linux_arm64",
+)
+
+go_sdk_ext = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
+go_sdk_ext.download(version = "1.25.3")
+
+go_deps = use_extension("@gazelle//:extensions.bzl", "go_deps")
+go_deps.from_file(go_work = "//:go.work")
+use_repo(
+    go_deps,
+    "cc_mvdan_gofumpt",
+    "com_github_data_dog_go_sqlmock",
+    "com_github_go_playground_locales",
+    "com_github_go_playground_validator_v10",
+    "com_github_golang_migrate_migrate_v4",
+    "com_github_golangci_golangci_lint_v2",
+    "com_github_google_keep_sorted",
+    "com_github_google_uuid",
+    "com_github_grpc_ecosystem_go_grpc_middleware_v2",
+    "com_github_jackc_pgx_v5",
+    "com_github_jmoiron_sqlx",
+    "com_github_katexochen_sh_v3",
+    "com_github_oidq_ecslog",
+    "com_github_rhysd_actionlint",
+    "com_github_spf13_viper",
+    "com_github_stretchr_testify",
+    "io_opentelemetry_go_otel_trace",
+    "org_golang_google_grpc",
+    "org_golang_google_grpc_cmd_protoc_gen_go_grpc",
+    "org_golang_google_protobuf",
+    "org_golang_x_tools",
+    "org_golang_x_vuln",
+)
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+oci.pull(
+    name = "distroless_base",
+    digest = "sha256:ccaef5ee2f1850270d453fdf700a5392534f8d1a8ca2acda391fbb6a06b81c86",
+    image = "gcr.io/distroless/base",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64",
+    ],
+)
+oci.pull(
+    name = "ubuntu_2404",
+    digest = "sha256:c35e29c9450151419d9448b0fd75374fec4fff364a27f176fb458d472dfc9e54",
+    image = "docker.io/library/ubuntu",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64/v8",
+    ],
+)
+use_repo(
+    oci,
+    "distroless_base",
+    "distroless_base_linux_amd64",
+    "distroless_base_linux_arm64",
+    "ubuntu_2404",
+    "ubuntu_2404_linux_amd64",
+    "ubuntu_2404_linux_arm64_v8",
+)

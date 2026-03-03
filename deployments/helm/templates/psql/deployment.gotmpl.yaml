@@ -1,0 +1,48 @@
+{{- if .Values.postgres.enabled | default false }}
+{{- $secretName := .Values.postgres.auth.existingSecret | default (printf "%s-postgres-credentials" (include "pictago.fullname" .)) }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "pictago.fullname" . }}-postgres
+  labels:
+    {{ include "pictago.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.postgres.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "pictago.fullname" . }}-postgres
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "pictago.fullname" . }}-postgres
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: postgres
+          image: {{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}
+          imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+          ports:
+            - name: postgres
+              containerPort: {{ .Values.postgres.service.port }}
+          env:
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.database | quote }}
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: password
+          volumeMounts:
+            - name: data
+              mountPath: {{ .Values.postgres.persistence.mountPath }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Values.postgres.persistence.existingClaim }}
+{{- end }}

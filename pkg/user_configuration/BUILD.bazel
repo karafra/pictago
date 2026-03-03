@@ -1,0 +1,9 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "user_configuration",
+    srcs = ["server.go"],
+    importpath = "github.com/ai-slop-code/pictago/pkg/user_configuration",
+    visibility = ["//visibility:public"],
+    deps = ["//api/proto/pictago/v1:v1_grpc_gateway"],
+)

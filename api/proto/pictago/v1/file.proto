@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package pictago.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/ai-slop-code/pictago/api/proto/pictago/v1";
+
+service FileUpload {
+  rpc UploadFile(UploadFileRequest) returns (UploadFileResponse) {
+    option (google.api.http) = {
+      post: "/v1/files"
+      body: "*"
+    };
+  }
+
+  rpc DeleteFile(DeleteFileRequest) returns (DeleteFileResponse) {
+    option (google.api.http) = {
+      delete: "/v1/files/{file_id}"
+    };
+  }
+
+  rpc GetFile(GetFileRequest) returns (GetFileResponse) {
+    option (google.api.http) = {
+      get: "/v1/files/{file_id}"
+    };
+  }
+
+  rpc ListFiles(ListFilesRequest) returns (ListFilesResponse) {
+    option (google.api.http) = {
+      get: "/v1/files"
+    };
+  }
+}
+
+message UploadFileRequest {
+  string filename = 1;
+  string content_type = 2;
+  bytes content = 3;
+}
+
+message UploadFileResponse {
+  string file_id = 1;
+}
+
+message DeleteFileRequest {
+  string file_id = 1;
+}
+
+message DeleteFileResponse {}
+
+message GetFileRequest {
+  string file_id = 1;
+}
+
+message GetFileResponse {
+  string filename = 1;
+  string content_type = 2;
+  bytes content = 3;
+}
+
+message ListFilesRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message FileInfo {
+  string file_id = 1;
+  string filename = 2;
+  string content_type = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
+
+message ListFilesResponse {
+  repeated FileInfo files = 1;
+  string next_page_token = 2;
+}
