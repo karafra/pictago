@@ -72,7 +72,7 @@ var services = []Service{
 	{
 		Name: "UserManagement",
 		GrpcRegistrar: func(srv *grpc.Server) {
-			v1gw.RegisterUserManagementServer(srv, user_management.NewUserManagementServer(user.NewService(user.NewDAO(&sqlx.DB{}))))
+			v1gw.RegisterUserManagementServer(srv, user_management.NewUserManagementServer(user.NewServiceV1(user.NewDAO(&sqlx.DB{}))))
 		},
 		GatewayRegistrar: v1gw.RegisterUserManagementHandlerFromEndpoint,
 	},
