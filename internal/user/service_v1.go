@@ -15,12 +15,12 @@ type ServiceV1 interface {
 	CreateUser(ctx context.Context, user Model) (*Model, error)
 }
 
-type service struct {
+type serviceV1 struct {
 	dao    DAO
 	logger log.Logger
 }
 
-func (s *service) GetUserByID(ctx context.Context, userID string) (*Model, error) {
+func (s *serviceV1) GetUserByID(ctx context.Context, userID string) (*Model, error) {
 	id, err := uuid.Parse(userID)
 	if err != nil {
 		s.logger.Error("Failed to parse user id", "error", err)
@@ -29,7 +29,7 @@ func (s *service) GetUserByID(ctx context.Context, userID string) (*Model, error
 	return s.dao.GetUserById(ctx, id)
 }
 
-func (s *service) CreateUser(ctx context.Context, user Model) (*Model, error) {
+func (s *serviceV1) CreateUser(ctx context.Context, user Model) (*Model, error) {
 	curUsr, err := s.dao.GetUserByEmail(ctx, user.Email)
 	if errors.Is(err, sql.ErrNoRows) && curUsr != nil {
 		return nil, errors.New("user with this email already exists")
@@ -44,10 +44,10 @@ func (s *service) CreateUser(ctx context.Context, user Model) (*Model, error) {
 	return &user, nil
 }
 
-var _ ServiceV1 = &service{}
+var _ ServiceV1 = &serviceV1{}
 
 func NewServiceV1(dao DAO) ServiceV1 {
-	return &service{
+	return &serviceV1{
 		dao:    dao,
 		logger: log.NewDefaultLogger(),
 	}
