@@ -9,7 +9,7 @@ import (
 
 type server struct {
 	pb.UnimplementedUserManagementServer
-	svc user.Service
+	svcV1 user.ServiceV1
 }
 
 func (s *server) GetUsers(context.Context, *pb.GetUsersRequest) (*pb.GetUsersResponse, error) {
@@ -18,7 +18,7 @@ func (s *server) GetUsers(context.Context, *pb.GetUsersRequest) (*pb.GetUsersRes
 }
 
 func (s *server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
-	usr, err := s.svc.CreateUser(ctx, user.Model{
+	usr, err := s.svcV1.CreateUser(ctx, user.Model{
 		Username: req.Username,
 		Email:    req.Email,
 	})
@@ -39,6 +39,6 @@ func (s *server) DeleteUser(context.Context, *pb.DeleteUserRequest) (*pb.DeleteU
 
 var _ pb.UserManagementServer = &server{}
 
-func NewUserManagementServer(svc user.Service) pb.UserManagementServer {
-	return &server{svc: svc}
+func NewUserManagementServer(svc user.ServiceV1) pb.UserManagementServer {
+	return &server{svcV1: svc}
 }

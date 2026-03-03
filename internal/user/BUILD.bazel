@@ -5,7 +5,7 @@ go_library(
     srcs = [
         "dao.go",
         "model.go",
-        "service.go",
+        "service_v1.go",
     ],
     importpath = "github.com/ai-slop-code/pictago/internal/user",
     visibility = ["//:__subpackages__"],
@@ -21,7 +21,7 @@ go_test(
     timeout = "short",
     srcs = [
         "dao_test.go",
-        "service_test.go",
+        "service_v1_test.go",
     ],
     embed = [":user"],
     deps = [

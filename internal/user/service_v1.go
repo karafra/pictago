@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Service interface {
+type ServiceV1 interface {
 	GetUserByID(ctx context.Context, userID string) (*Model, error)
 	CreateUser(ctx context.Context, user Model) (*Model, error)
 }
@@ -44,9 +44,9 @@ func (s *service) CreateUser(ctx context.Context, user Model) (*Model, error) {
 	return &user, nil
 }
 
-var _ Service = &service{}
+var _ ServiceV1 = &service{}
 
-func NewService(dao DAO) Service {
+func NewServiceV1(dao DAO) ServiceV1 {
 	return &service{
 		dao:    dao,
 		logger: log.NewDefaultLogger(),
