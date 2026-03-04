@@ -1,4 +1,4 @@
-load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "user_management",
@@ -9,4 +9,16 @@ go_library(
         "//api/proto/pictago/v1:v1_grpc_gateway",
         "//internal/user",
     ],
+)
+
+go_test(
+    name = "user_management_test",
+    srcs = ["server_test.go"],
+    embed = [":user_management"],
+    deps = [
+        "//api/proto/pictago/v1:v1_grpc_gateway",
+        "//internal/user",
+        "@com_github_stretchr_testify//assert",
+    ],
+    timeout = "short",
 )
