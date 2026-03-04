@@ -13,6 +13,7 @@ go_library(
 
 go_test(
     name = "user_management_test",
+    timeout = "short",
     srcs = ["server_test.go"],
     embed = [":user_management"],
     deps = [
@@ -20,5 +21,4 @@ go_test(
         "//internal/user",
         "@com_github_stretchr_testify//assert",
     ],
-    timeout = "short",
 )
