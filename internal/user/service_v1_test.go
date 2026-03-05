@@ -31,6 +31,10 @@ func (m mockUserDao) DeleteUserById(context.Context, string) error {
 	return m.err
 }
 
+func (m mockUserDao) GetAllUsers(context.Context) ([]*Model, error) {
+	return []*Model{&m.usr}, m.err
+}
+
 var _ DAO = mockUserDao{}
 
 func TestServiceV1_GetUserByID(t *testing.T) {

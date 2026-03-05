@@ -62,3 +62,6 @@ test --experimental_fetch_all_coverage_outputs
 # hanging or stuck in infinite loops.
 # Docs: https://bazel.build/reference/test-encyclopedia
 test --test_verbose_timeout_warnings
+
+# Disables duplicate librarires warning on OS X
+build --linkopt=-Wl,-no_warn_duplicate_libraries

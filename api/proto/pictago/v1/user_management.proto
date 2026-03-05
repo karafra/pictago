@@ -29,6 +29,12 @@ service UserManagement {
     };
   }
 
+  rpc GetUser(GetUserRequest) returns (GetUserInfoResponse) {
+    option (google.api.http) = {
+      get:  "/v1/management/users/{user_id}"
+    };
+  }
+
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
     option (google.api.http) = {
       post: "/v1/management/users"
@@ -47,6 +53,10 @@ message GetUsersRequest {}
 
 message GetUsersResponse {
   repeated GetUserInfoResponse users = 1;
+}
+
+message GetUserRequest {
+  string user_id = 1;
 }
 
 message CreateUserRequest {

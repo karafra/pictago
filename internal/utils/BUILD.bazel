@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "dates.go",
         "path.go",
+        "slices.go",
         "validator.go",
     ],
     importpath = "github.com/ai-slop-code/pictago/internal/utils",
@@ -18,6 +19,7 @@ go_test(
     srcs = [
         "dates_test.go",
         "path_test.go",
+        "slices_test.go",
         "validator_test.go",
     ],
     embed = [":utils"],

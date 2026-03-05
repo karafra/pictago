@@ -12,6 +12,7 @@ import (
 
 type ServiceV1 interface {
 	GetUserByID(ctx context.Context, userID string) (*Model, error)
+	GetAllUsers(ctx context.Context) ([]*Model, error)
 	CreateUser(ctx context.Context, user Model) (*Model, error)
 }
 
@@ -27,6 +28,15 @@ func (s *serviceV1) GetUserByID(ctx context.Context, userID string) (*Model, err
 		return nil, err
 	}
 	return s.dao.GetUserById(ctx, id)
+}
+
+func (s *serviceV1) GetAllUsers(ctx context.Context) ([]*Model, error) {
+	users, err := s.dao.GetAllUsers(ctx)
+	if err != nil {
+		s.logger.Error("Failed to get all users", "error", err)
+		return nil, err
+	}
+	return users, nil
 }
 
 func (s *serviceV1) CreateUser(ctx context.Context, user Model) (*Model, error) {

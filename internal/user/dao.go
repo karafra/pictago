@@ -10,6 +10,7 @@ import (
 
 type DAO interface {
 	GetUserById(ctx context.Context, id uuid.UUID) (*Model, error)
+	GetAllUsers(ctx context.Context) ([]*Model, error)
 	GetUserByEmail(ctx context.Context, email string) (*Model, error)
 	SaveUser(ctx context.Context, user *Model) error
 	DeleteUserById(ctx context.Context, id string) error
@@ -27,6 +28,16 @@ func (d *dao) GetUserById(ctx context.Context, id uuid.UUID) (*Model, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (d *dao) GetAllUsers(ctx context.Context) ([]*Model, error) {
+	var users []*Model
+	query := `SELECT * FROM users`
+	err := d.db.SelectContext(ctx, &users, query)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
 }
 
 func (d *dao) GetUserByEmail(ctx context.Context, email string) (*Model, error) {
